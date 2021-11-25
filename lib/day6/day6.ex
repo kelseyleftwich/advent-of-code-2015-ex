@@ -14,15 +14,22 @@ defmodule Aoc.Day6 do
   def turn_on_lights(grid, corner_a, corner_b) do
     get_target_cells(corner_a, corner_b)
     |> Enum.reduce(grid, fn {x, y}, acc ->
-      put_in(acc[x][y], 1)
+      current_state = grid[x][y]
+
+      put_in(acc[x][y], turn_on_light(current_state))
     end)
   end
+
+  @spec turn_on_light(number()) :: number()
+  def turn_on_light(intensity), do: intensity + 1
 
   @spec turn_off_lights(light_grid(), coordinate_pair(), coordinate_pair()) :: light_grid()
   def turn_off_lights(grid, corner_a, corner_b) do
     get_target_cells(corner_a, corner_b)
     |> Enum.reduce(grid, fn {x, y}, acc ->
-      put_in(acc[x][y], 0)
+      current_state = grid[x][y]
+      new_state = max(0, current_state - 1)
+      put_in(acc[x][y], new_state)
     end)
   end
 
@@ -35,8 +42,7 @@ defmodule Aoc.Day6 do
     end)
   end
 
-  def toggle_light(1), do: 0
-  def toggle_light(0), do: 1
+  def toggle_light(intensity), do: intensity + 2
 
   @spec get_target_cells(coordinate_pair(), coordinate_pair()) :: any()
   def get_target_cells({a_x, a_y}, {b_x, b_y}) do
@@ -95,7 +101,7 @@ defmodule Aoc.Day6 do
     end)
   end
 
-  def part_1() do
+  def solve() do
     instructions = Aoc.FileReader.get_lines("lib/day6/puzzleInput.txt")
     grid = build_grid(1000, 1000)
 
@@ -105,7 +111,8 @@ defmodule Aoc.Day6 do
     end)
     |> Matrix.to_list()
     |> List.flatten()
-    |> Stream.filter(fn light -> light == 1 end)
-    |> Enum.count()
+    |> Enum.reduce(0, fn light, acc ->
+      acc + light
+    end)
   end
 end
