@@ -1,0 +1,3 @@
+%{
+  "formulae": {:hex, :formulae, "0.8.0", "1e94d1e038e6d42068cd474aefa3dd81bafc5af4e53399f1ee977c2e4be58a84", [:mix], [], "hexpm", "1f31da15c66a0f02720dc48f0b9f317e581c1779325b998d142a978b95453bcb"},
+}
