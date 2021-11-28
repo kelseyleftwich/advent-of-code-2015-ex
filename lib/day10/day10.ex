@@ -8,6 +8,15 @@ defmodule Aoc.Day10 do
     |> String.length()
   end
 
+  def part_2(input \\ "1113122113") do
+    1..50
+    |> Enum.reduce(input, fn _curr, acc ->
+      acc
+      |> look_and_say()
+    end)
+    |> String.length()
+  end
+
   @spec look_and_say(String.t()) :: String.t()
   def look_and_say(input) do
     input
