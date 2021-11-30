@@ -1,57 +1,57 @@
 defmodule Aoc.Day11 do
-  @alphabet_libray ?a..?z |> Enum.map(&to_string([&1]))
-  require Formulae.Combinators
+  @alphabet_library ?a..?z |> Enum.map(&to_string([&1]))
 
-  def iterate_to_valid_password(input) do
-    {remaining, starting_char} =
+  def fetch_new_password(input) do
+    next_pass =
       input
-      |> String.split_at(-1)
+      |> new_password()
 
-    remaining_length = remaining |> String.length()
-
-    space_to_fill = 8 - remaining_length
-
-    valid_passwords =
-      space_to_fill
-      |> get_permutations()
-      |> Stream.filter(fn [hd | _] -> hd > starting_char end)
-      |> Stream.map(fn perm -> perm |> Enum.join("") end)
-      |> Stream.map(fn perm -> "#{remaining}#{perm}" end)
-      |> Enum.map(fn candidate -> {candidate, valid_password?(candidate)} end)
-      |> Enum.filter(fn {_candidate, is_valid?} -> is_valid? end)
-
-    valid_passwords
-    |> Enum.count()
-    |> Kernel.<(1)
+    next_pass
+    |> valid_password?()
     |> if do
-      iterate_to_valid_password(remaining)
+      next_pass
     else
-      valid_passwords
-      |> Enum.at(0)
-      |> elem(0)
+      next_pass |> fetch_new_password()
     end
   end
 
-  # Formulae doesn't have a dynamic number function for repeated_permutations
-  def get_permutations(1), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(1)
-  def get_permutations(2), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(2)
-  def get_permutations(3), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(3)
-  def get_permutations(4), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(4)
-  def get_permutations(5), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(5)
-  def get_permutations(6), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(6)
-  def get_permutations(7), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(7)
-  def get_permutations(8), do: @alphabet_libray |> Formulae.Combinators.repeated_permutations(8)
+  def new_password(input) do
+    password_chars = input |> String.graphemes()
 
-  def get_new_letter(new_letter_index) do
-    if new_letter_index >=
-         @alphabet_libray
-         |> Enum.count() do
-      @alphabet_libray
-      |> hd()
+    index = -1
+
+    password_chars
+    |> wrap(index)
+    |> Enum.join("")
+  end
+
+  def wrap(input, index) do
+    input
+    |> Enum.at(index)
+    |> is_last_letter?()
+    |> if do
+      input
+      |> List.replace_at(index, "a")
+      |> wrap(index - 1)
     else
-      @alphabet_libray
-      |> Enum.at(new_letter_index)
+      next_letter = iterate_letter(input |> Enum.at(index))
+
+      input
+      |> List.replace_at(index, next_letter)
     end
+  end
+
+  def is_last_letter?(letter), do: letter == "z"
+
+  def iterate_letter(letter) do
+    new_index =
+      @alphabet_library
+      |> Enum.find_index(fn char -> char === letter end)
+      |> Kernel.+(1)
+      |> rem(26)
+
+    @alphabet_library
+    |> Enum.at(new_index)
   end
 
   def valid_password?(input) do
@@ -121,7 +121,7 @@ defmodule Aoc.Day11 do
   end
 
   def get_letter_index(letter) do
-    @alphabet_libray
+    @alphabet_library
     |> Enum.find_index(fn elem -> elem == letter end)
   end
 end
