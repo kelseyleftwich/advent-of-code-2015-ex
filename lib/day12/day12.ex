@@ -1,7 +1,7 @@
 defmodule Day12 do
   alias Aoc.FileReader
 
-  def part_1() do
+  def solve() do
     FileReader.get_json("lib/day12/puzzleInput.json")
     |> elem(1)
     |> parse_numbers_from_json()
@@ -15,12 +15,29 @@ defmodule Day12 do
     count + input
   end
 
-  def parse_numbers_from_json(input, count) when is_list(input) or is_map(input) do
+  def parse_numbers_from_json(input, count) when is_list(input) do
     input
     |> Enum.reduce(count, fn elem, acc ->
       elem
       |> parse_numbers_from_json(acc)
     end)
+  end
+
+  def parse_numbers_from_json(input, count) when is_map(input) do
+    input
+    |> Map.values()
+    |> Enum.find(fn key -> key == "red" end)
+    |> case do
+      nil ->
+        input
+        |> Enum.reduce(count, fn elem, acc ->
+          elem
+          |> parse_numbers_from_json(acc)
+        end)
+
+      _ ->
+        count
+    end
   end
 
   def parse_numbers_from_json({input_a, input_b}, count) do
