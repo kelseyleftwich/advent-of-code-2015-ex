@@ -1,3 +1,4 @@
 %{
   "formulae": {:hex, :formulae, "0.8.0", "1e94d1e038e6d42068cd474aefa3dd81bafc5af4e53399f1ee977c2e4be58a84", [:mix], [], "hexpm", "1f31da15c66a0f02720dc48f0b9f317e581c1779325b998d142a978b95453bcb"},
+  "poison": {:hex, :poison, "5.0.0", "d2b54589ab4157bbb82ec2050757779bfed724463a544b6e20d79855a9e43b24", [:mix], [{:decimal, "~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "11dc6117c501b80c62a7594f941d043982a1bd05a1184280c0d9166eb4d8d3fc"},
 }
